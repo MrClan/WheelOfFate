@@ -12,7 +12,7 @@ namespace RichmondGroupTechnicalTask.Implementations
         public bool Validate(Engineer engineer, DateTime date)
         {
             var endDate = date;
-            var startDate = endDate.AddDays(-15);
+            var startDate = endDate.AddDays(-10);
             // if already been scheduled more than twice in last two weeks, mark him as invalid
             // TODO: TAKE NOTE OF OFF-BY-ONE ERROR - to include or not include current date
             return !(engineer.Schedules.Where(s => s.Date.IsBetween(startDate, endDate)).Count() >= 2);
