@@ -3,9 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
+using System.Web.Http.Cors;
 
 namespace RichmondGroupTechnicalTask.Controllers
 {
+    [EnableCors("*","*","*")]
     public class FateController : ApiController
     {
         public IHttpActionResult Get()
@@ -14,7 +16,7 @@ namespace RichmondGroupTechnicalTask.Controllers
             var tableOfFate = new Dictionary<int, List<Engineer>>();
 
             tableOfFate = AppCore.RotateTheWheelOfFate();
-            return Ok(tableOfFate.Select(kvp => $"{kvp.Key}: {String.Join(",", kvp.Value.Select(e=> e.Name))}"));
+            return Ok(tableOfFate.Select(kvp => kvp.Value.Select(e=> e.Name)));
         }
     }
 }

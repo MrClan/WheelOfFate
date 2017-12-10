@@ -22,10 +22,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/03/2014 20:33:56</publishTime>
     </File>
     <File Include="bin/RichmondGroupTechnicalTask.dll">
-      <publishTime>12/10/2017 06:17:30</publishTime>
+      <publishTime>12/10/2017 07:59:22</publishTime>
     </File>
     <File Include="bin/RichmondGroupTechnicalTask.pdb">
-      <publishTime>12/10/2017 06:17:30</publishTime>
+      <publishTime>12/10/2017 07:59:22</publishTime>
     </File>
     <File Include="bin/roslyn/csc.exe">
       <publishTime>04/13/2017 15:47:48</publishTime>
@@ -173,6 +173,12 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     </File>
     <File Include="bin/System.Net.Http.Formatting.dll">
       <publishTime>01/28/2015 04:02:42</publishTime>
+    </File>
+    <File Include="bin/System.Web.Cors.dll">
+      <publishTime>01/28/2015 04:01:46</publishTime>
+    </File>
+    <File Include="bin/System.Web.Http.Cors.dll">
+      <publishTime>01/28/2015 04:03:04</publishTime>
     </File>
     <File Include="bin/System.Web.Http.dll">
       <publishTime>01/28/2015 04:02:54</publishTime>
