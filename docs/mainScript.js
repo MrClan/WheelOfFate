@@ -12,7 +12,7 @@ var app = new Vue({
         refreshData() {
             let _this = this
             _this.isLoading = true
-            axios.get('http://localhost:64563/api/fate')//http://wof.wannabedev.com/api/fate')
+            axios.get('http://wof.wannabedev.com/api/fate')
                 .then(function (response) {
                     console.log(response)
                     _this.names.length = 0 // clear existing data
