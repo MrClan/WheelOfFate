@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Wheel Of Fate</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.1/css/bulma.min.css">
+    <style>
+        .loading {
+            -moz-transition: all 5s ease-in;
+            -o-transition: all 5s ease-in;
+            -webkit-transition: all 5s ease-in;
+            transition: all 5s ease-in;
+            background: #fffbd2;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <section class="section">
+            <div class="container">
+                <div class="has-text-centered">
+                    <p v-if="isLoading">refreshing data...</p>
+                    <span class="button is-success" @click="refreshData()">Generate Schedule for two weeks</span>
+                </div>
+                <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth" :class="{loading: isLoading}">
+                    <thead>
+                        <tr>
+                            <th>Day</th>
+                            <th>First Shift</th>
+                            <th>Second Shift</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="n in names">
+                            <td>{{n[0]}}</td>
+                            <td>{{n[1]}}</td>
+                            <td>{{n[2]}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p class="subtitle has-text-centered">
+                    <span class="tag">
+                        The code is hosted on github at: <a href="https://github.com/MrClan/WheelOfFate">&nbsp;@MrClan - Wheel of fate</a>
+                    </span>
+                </p>
+            </div>
+    </div>
+    </section>
+    <script src="https://unpkg.com/vue"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="mainScript.js"></script>
+</body>
+
+</html>
