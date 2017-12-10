@@ -1,4 +1,5 @@
-﻿using RichmondGroupTechnicalTask.Implementations;
+﻿using RichmondGroupTechnicalTask.Contracts;
+using RichmondGroupTechnicalTask.Implementations;
 using RichmondGroupTechnicalTask.Models;
 using System;
 using System.Collections.Generic;
@@ -11,8 +12,9 @@ namespace RichmondGroupTechnicalTask
     {
 
         private static Random _randomizer = new Random();
-        private static SchedulesRepository schedulesRepository = new SchedulesRepository();
-        private static EngineersRepository engineersRepository = new EngineersRepository();
+        private static SchedulesRepositoryInMemory schedulesRepository = new SchedulesRepositoryInMemory();
+        private static EngineersRepositoryInMemory engineersRepository = new EngineersRepositoryInMemory();
+
 
         private static List<IRule> AppliedRules
         {
@@ -20,9 +22,9 @@ namespace RichmondGroupTechnicalTask
             {
                 return new List<IRule>
                 {
-                    new CannotDoTwoShiftsOnTheSameDayRule(),
+                    new CanDoShiftOnThisDateRule(),
                     new CannotHaveHalfDayShiftsOnConsecutiveDaysRule(),
-                    new HaveAlreadyBeenScheduledTwiceInLastTwoWeekPeriodRule()
+                    new CannotDoMoreThanTwoShiftsInTwoWeekPeriodRule()
                 };
             }
         }
@@ -33,37 +35,23 @@ namespace RichmondGroupTechnicalTask
             return allEngineers.ToList();
         }
 
-        public static List<Schedule> GetBiWeeklySchedule(DateTime forDate)
+        public static Dictionary<int, List<Engineer>> RotateTheWheelOfFate()
         {
-            var endDate = forDate;
-            var startDate = endDate.AddDays(-14); // since we're considering only weekdays
-            var schedules = new List<Schedule>();
-            schedules = schedulesRepository.GetMany(s => s.Date.IsBetween(startDate, endDate)).ToList();
-            return schedules;
-        }
-
-        public static List<Engineer> RotateTheWheelOfFate(DateTime forDate)
-        {
-            forDate = forDate.Date; // throw away time part
-            // check if schedules for forDate has already been calculated, if so return that
-            var schedulesForToday = schedulesRepository.GetMany(s => s.Date == forDate.Date).ToList();
-            if (schedulesForToday.Count == 2)
-            {
-                return engineersRepository.GetMany(e => e.Id == schedulesForToday[0].EngineerId || e.Id == schedulesForToday[1].EngineerId).ToList();
-            }
-
-
-            // 1. get all engineers, with their schedules for past two weeks
-            // 2. validate rules
-            // 3. return a pair of engineers
+            DateTime forDate = DateTime.Now.Date; // throw away time part
+            var tableOfFate = new Dictionary<int, List<Engineer>>();
 
             var allEngineers = GetAllEngineers();
-            var allSchedules = GetBiWeeklySchedule(forDate);
+            var allSchedules = new List<Schedule>();
 
-            var engineer1 = GetValidEngineersForTheDay(allEngineers, allSchedules, forDate);
-            var engineer2 = GetValidEngineersForTheDay(allEngineers, allSchedules, forDate);
+            for (int i = 0; i < 10; i++)
+            {
+                forDate = forDate.AddDays(1);
+                var engineer1 = GetValidEngineersForTheDay(allEngineers, allSchedules, forDate);
+                var engineer2 = GetValidEngineersForTheDay(allEngineers, allSchedules, forDate);
 
-            return new List<Engineer> { engineer1, engineer2 };
+                tableOfFate.Add(i, new List<Engineer> { engineer1, engineer2 });
+            }
+            return tableOfFate;
         }
 
         private static Engineer GetValidEngineersForTheDay(List<Engineer> allEngineers, List<Schedule> allSchedules, DateTime forDate)
@@ -87,8 +75,8 @@ namespace RichmondGroupTechnicalTask
                 selectedEngineer = allEngineers[randomIndex];
                 selectedEngineer.Schedules = allSchedules.Where(s => s.EngineerId == selectedEngineer.Id).ToList();
 
-                var isValid = AppliedRules.All(r => r.Validate(selectedEngineer, forDate));
-                if (isValid)
+                var isEligible = AppliedRules.All(r => r.Validate(selectedEngineer, forDate));
+                if (isEligible)
                 {
                     // add this schedule to database
                     var schedule = new Schedule() { EngineerId = selectedEngineer.Id, Date = forDate, Shift = Shift.First };

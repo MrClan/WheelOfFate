@@ -99,12 +99,18 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Contracts\IDbEntity.cs" />
     <Compile Include="Contracts\IRepository.cs" />
+    <Compile Include="Contracts\IRule.cs" />
     <Compile Include="Controllers\FateController.cs" />
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="HelperExtensions.cs" />
+    <Compile Include="Implementations\Rules\CannotDoMoreThanTwoShiftsInTwoWeekPeriodRule.cs" />
+    <Compile Include="Implementations\Rules\CannotHaveHalfDayShiftsOnConsecutiveDaysRule.cs" />
+    <Compile Include="Implementations\Rules\CannotDoTwoShiftsOnTheSameDayRule.cs" />
+    <Compile Include="Implementations\EngineersRepositoryInMemory.cs" />
+    <Compile Include="Implementations\SchedulesRepositoryInMemory.cs" />
     <Compile Include="Implementations\SchedulesRepository.cs" />
     <Compile Include="Implementations\EngineersRepository.cs" />
     <Compile Include="Migrations\201712091745392_Initial.cs" />
@@ -112,12 +118,11 @@
       <DependentUpon>201712091745392_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="Mocks\MockedEngineersRepository.cs" />
-    <Compile Include="Mocks\MockedSchedulesRepository.cs" />
     <Compile Include="Models\Engineer.cs" />
     <Compile Include="Models\Schedule.cs" />
     <Compile Include="Models\Shift.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RGTTDbContextInMemory.cs" />
     <Compile Include="RGTTDbContext.cs" />
   </ItemGroup>
   <ItemGroup>
