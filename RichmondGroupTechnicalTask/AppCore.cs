@@ -47,11 +47,6 @@ namespace RichmondGroupTechnicalTask
             for (int i = 0; i < 10; i++)
             {
                 forDate = forDate.AddDays(1);
-                // ensure every engineer has appeared atleast once before 9th day
-                if (i == 7)
-                {
-                    pickRandomly = allEngineers.Where(e => !pickedEngineers.Contains(e.Id)).Count() == 0;
-                }
 
                 var engineer1 = GetValidEngineersForTheDay(allEngineers, allSchedules, forDate);
                 var engineer2 = GetValidEngineersForTheDay(allEngineers, allSchedules, forDate);
@@ -62,11 +57,13 @@ namespace RichmondGroupTechnicalTask
         }
 
         static HashSet<Guid> pickedEngineers = new HashSet<Guid>();
-        static bool pickRandomly = true;
 
         private static Engineer GetValidEngineersForTheDay(List<Engineer> allEngineers, List<Schedule> allSchedules, DateTime forDate)
         {
             Engineer selectedEngineer = null;
+            // prioritize remaining engineers by picking only from remaining engineers
+            var remainingEngineers = allEngineers.Where(e => !pickedEngineers.Contains(e.Id)).ToList();
+            var listToPickFrom = remainingEngineers.Count == 0 ? allEngineers: remainingEngineers;
 
             // pick one engineer at random, check if they pass all the business rules
             // if they do, return that engineer
@@ -74,24 +71,16 @@ namespace RichmondGroupTechnicalTask
 
             HashSet<int> checkedIndices = new HashSet<int>();
 
-            for (int i = 0; i < allEngineers.Count; i++) // worst case scenario, this loop will fully be executed
+            for (int i = 0; i < listToPickFrom.Count; i++) // worst case scenario, this loop will fully be executed
             {
-                if (pickRandomly)
+                var randomIndex = 0;
+                do
                 {
-                    var randomIndex = 0;
-                    do
-                    {
-                        randomIndex = _randomizer.Next() % allEngineers.Count;
-                    } while (checkedIndices.Contains(randomIndex)); // make sure same engineer is not checked over and over again
-                    checkedIndices.Add(randomIndex);
-                    selectedEngineer = allEngineers[randomIndex];
-                }
-                else
-                {
-                    var remainingEngineers = allEngineers.Where(e => !pickedEngineers.Contains(e.Id));
-                    selectedEngineer = allEngineers.First(e => e.Id == remainingEngineers.First().Id);
-                    pickRandomly = true;
-                }
+                    randomIndex = _randomizer.Next() % listToPickFrom.Count;
+                } while (checkedIndices.Contains(randomIndex)); // make sure same engineer is not checked over and over again
+                checkedIndices.Add(randomIndex);
+                selectedEngineer = listToPickFrom[randomIndex];
+
                 selectedEngineer.Schedules = allSchedules.Where(s => s.EngineerId == selectedEngineer.Id).ToList();
 
                 var isEligible = AppliedRules.All(r => r.Validate(selectedEngineer, forDate));

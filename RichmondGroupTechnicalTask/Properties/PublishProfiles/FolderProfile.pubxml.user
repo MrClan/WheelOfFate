@@ -22,10 +22,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>08/03/2014 20:33:56</publishTime>
     </File>
     <File Include="bin/RichmondGroupTechnicalTask.dll">
-      <publishTime>12/10/2017 17:06:35</publishTime>
+      <publishTime>12/10/2017 17:50:39</publishTime>
     </File>
     <File Include="bin/RichmondGroupTechnicalTask.pdb">
-      <publishTime>12/10/2017 17:06:35</publishTime>
+      <publishTime>12/10/2017 17:50:39</publishTime>
     </File>
     <File Include="bin/roslyn/csc.exe">
       <publishTime>04/13/2017 15:47:48</publishTime>

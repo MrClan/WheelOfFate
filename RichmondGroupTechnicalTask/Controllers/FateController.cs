@@ -14,7 +14,6 @@ namespace RichmondGroupTechnicalTask.Controllers
         {
             // return a table for 10 days (2 weeks, with 5 working days each)
             var tableOfFate = new Dictionary<int, List<Engineer>>();
-
             tableOfFate = AppCore.RotateTheWheelOfFate();
             return Ok(tableOfFate.Select(kvp => kvp.Value.Select(e=> e.Name)));
         }
