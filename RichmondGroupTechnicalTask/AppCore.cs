@@ -42,10 +42,17 @@ namespace RichmondGroupTechnicalTask
 
             var allEngineers = GetAllEngineers();
             var allSchedules = new List<Schedule>();
+            pickedEngineers = new HashSet<Guid>();
 
             for (int i = 0; i < 10; i++)
             {
                 forDate = forDate.AddDays(1);
+                // ensure every engineer has appeared atleast once before 9th day
+                if (i == 7)
+                {
+                    pickRandomly = allEngineers.Where(e => !pickedEngineers.Contains(e.Id)).Count() == 0;
+                }
+
                 var engineer1 = GetValidEngineersForTheDay(allEngineers, allSchedules, forDate);
                 var engineer2 = GetValidEngineersForTheDay(allEngineers, allSchedules, forDate);
 
@@ -53,6 +60,9 @@ namespace RichmondGroupTechnicalTask
             }
             return tableOfFate;
         }
+
+        static HashSet<Guid> pickedEngineers = new HashSet<Guid>();
+        static bool pickRandomly = true;
 
         private static Engineer GetValidEngineersForTheDay(List<Engineer> allEngineers, List<Schedule> allSchedules, DateTime forDate)
         {
@@ -66,13 +76,22 @@ namespace RichmondGroupTechnicalTask
 
             for (int i = 0; i < allEngineers.Count; i++) // worst case scenario, this loop will fully be executed
             {
-                var randomIndex = 0;
-                do
+                if (pickRandomly)
                 {
-                    randomIndex = _randomizer.Next() % allEngineers.Count;
-                } while (checkedIndices.Contains(randomIndex)); // make sure same engineer is not checked over and over again
-                checkedIndices.Add(randomIndex);
-                selectedEngineer = allEngineers[randomIndex];
+                    var randomIndex = 0;
+                    do
+                    {
+                        randomIndex = _randomizer.Next() % allEngineers.Count;
+                    } while (checkedIndices.Contains(randomIndex)); // make sure same engineer is not checked over and over again
+                    checkedIndices.Add(randomIndex);
+                    selectedEngineer = allEngineers[randomIndex];
+                }
+                else
+                {
+                    var remainingEngineers = allEngineers.Where(e => !pickedEngineers.Contains(e.Id));
+                    selectedEngineer = allEngineers.First(e => e.Id == remainingEngineers.First().Id);
+                    pickRandomly = true;
+                }
                 selectedEngineer.Schedules = allSchedules.Where(s => s.EngineerId == selectedEngineer.Id).ToList();
 
                 var isEligible = AppliedRules.All(r => r.Validate(selectedEngineer, forDate));
@@ -82,6 +101,7 @@ namespace RichmondGroupTechnicalTask
                     var schedule = new Schedule() { EngineerId = selectedEngineer.Id, Date = forDate, Shift = Shift.First };
                     schedulesRepository.SaveOne(schedule);
                     allSchedules.Add(schedule);
+                    pickedEngineers.Add(selectedEngineer.Id);
                     break;
                 }
             }
